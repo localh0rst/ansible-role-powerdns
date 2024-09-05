@@ -1,0 +1,10 @@
+---
+- name: PowerDNS - Install dependencies
+  apt:
+    state: present
+    update_cache: yes
+    name: 
+      - pdns-server
+      - pdns-recursor
+      - pdns-tools
+      - pdns-backend-mysql
