@@ -1,0 +1,5 @@
+---
+- name: PowerDNS (DNSDist) - Create Config
+  template:
+    src: dnsdist.conf.j2
+    dest: /etc/dnsdist/dnsdist.conf

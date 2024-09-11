@@ -1,0 +1,34 @@
+---
+- name: PowerDNS (Auth) - Create MySQL/MariaDB Database
+  community.mysql.mysql_db:
+    name: "{{ item.backend.database }}"
+    state: present
+  with_items: "{{ pdns_auths }}"
+  when: item.backend.type == 'mysql'
+
+- name: PowerDNS (Auth) - Create MySQL/MariaDB Users
+  community.mysql.mysql_user:
+    name: "{{ item.backend.username }}"
+    password: "{{ item.backend.password }}"
+    state: present
+    priv: "{{ item.backend.database }}.*:ALL"
+  with_items: "{{ pdns_auths }}"
+  when: item.backend.type == 'mysql'
+
+- name: PowerDNS (Auth) - Import MySQL/MariaDB Schema
+  community.mysql.mysql_db:
+    name: "{{ item.backend.database }}"
+    login_user: "{{ item.backend.username }}"
+    login_password: "{{ item.backend.password }}"
+    state: import
+    target: /usr/share/doc/pdns-backend-mysql/schema.mysql.sql
+  with_items: "{{ pdns_auths }}"
+  when: 
+    - item.backend.type == 'mysql'
+    - pdns_import_schema
+
+- name: PowerDNS (Auth) - Create MySQL/MariaDB Config for PowerDNS
+  template:
+    src: pdns.local.gmysql.conf.j2
+    dest: "{{ pdns_base_dir }}/pdns-{{ item.pool }}.d/pdns.local.gmysql.conf"
+  with_items: "{{ pdns_auths }}"

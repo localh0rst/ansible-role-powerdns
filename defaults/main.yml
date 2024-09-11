@@ -1,53 +1,60 @@
 ---
-powerdns:
-  install_mysql: true
-  install_recursor: true
-  install_auth: true
-  install_dnsdist: true
-  recursors:
-    - pool: recursor_pool
-      listen_ips: [127.0.0.1]
-      listen_port: 5353
-      config:
-        allow-from: 127.0.0.1
-        local-address: 127.0.0.1
-        local-port: 5353
-  auths:
-    - pool: external_pool
-      enabled: true
-      listen_ips: [127.0.0.1]
-      backend: 
-        type: mysql
-        username: powerdns_external
-        password: mys3cr3tpdnsPw!
-        database: powerdns_external
-        host: localhost
-      config:
-        api: yes
-        api-key: mysecretapikey 
-        primary: yes
-        master: yes
-        query-logging: yes
-        log-dns-details: yes
-        log-dns-queries: yes
-        log-timestamp: yes
-        loglevel: 4
-        launch: 
-        local-address: 127.0.0.1 
-        local-port: 5053
-        reuseport: yes
-        webserver: yes
-        webserver-address: 127.0.0.1
-        webserver-allow-from: 127.0.0.1,::1
-        webserver-port: 8081
-        # You should leave these empty. Wen require them because we
-        # will probably run multiple instances on the same host and
-        # need to set them by pool name
-        #config-dir:
-        #config-name: 
-        #include-dir: /etc/powerdns/pdns.d
-        
+pdns_install_mysql: true
+pdns_install_recursor: true
+pdns_install_auth: true
+pdns_install_dnsdist: true
+pdns_base_dir: /etc/powerdns
+pdns_user: pdns
+pdns_group: pdns
+# Import Schema (for now) should be disabled after first use. 
+# There is no check if it already exists. Ill do it later.
+pdns_import_schema: false
 
-
-
-        
+pdns_dnsdist_listen_default: "127.0.0.1:53"
+pdns_dnsdist_listen_additional: []
+pdns_dnsdist_create_pool_from_auths: false
+pdns_dnsdist_create_pool_from_recursors: false
+pdns_dnsdist_net_netmasks: {}
+pdns_dnsdist_rules: []
+pdns_dnsdist_internal_domains: []
+pdns_skip_user_config:
+    - config-dir
+    - config-name
+    - include-dir
+    - local-address
+    - local-port
+pdns_recursors:
+  - pool: recursor_pool
+    listen_ips: [127.0.0.1]
+    listen_port: 5353
+    config:
+      #allow-from: 127.0.0.1
+pdns_auths:
+  - pool: external_pool
+    enabled: true
+    listen_ips: [127.0.0.1]
+    listen_port: 5353
+    backend: 
+      type: mysql
+      username: powerdns_external
+      password: mys3cr3tpdnsPw!
+      database: powerdns_external
+      host: localhost
+    config:
+      #api: yes
+      #api-key: mysecretapikey 
+      #primary: yes
+      #master: yes
+      #query-logging: yes
+      #log-dns-details: yes
+      #log-dns-queries: yes
+      #log-timestamp: yes
+      #loglevel: 4
+      #launch: 
+      #local-address: 127.0.0.1 
+      #local-port: 5053
+      #reuseport: yes
+      #webserver: yes
+      #webserver-address: 127.0.0.1
+      #webserver-allow-from: 127.0.0.1,::1
+      #webserver-port: 8081

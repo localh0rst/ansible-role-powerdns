@@ -1,0 +1,14 @@
+local-address = {{ item.listen_ips | join(', ') }}
+local-port = {{ item.listen_port }}
+config-name = {{ item.pool }}
+include-dir = {{ pdns_base_dir }}/pdns-{{ item.pool }}.d
+
+{% for c in pdns_auths %}
+{% if c.pool == item.pool %}
+{% for k,v in c.config.items() %}
+{% if k not in pdns_skip_user_config %}
+{{k}} = {{v}}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}

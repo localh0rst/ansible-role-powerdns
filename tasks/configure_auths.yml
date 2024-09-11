@@ -1,0 +1,15 @@
+---
+- name: PowerDNS (Auth) - Create include-dir
+  file:
+    path: "{{ pdns_base_dir }}/pdns-{{ item.pool }}.d"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items: "{{ pdns_auths }}"
+
+- name: PowerDNS (Auth) - Create Config
+  template:
+    src: pdns.conf.j2
+    dest: "{{ pdns_base_dir }}/pdns-{{ item.pool }}.conf"
+  with_items: "{{ pdns_auths }}"

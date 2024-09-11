@@ -1,0 +1,15 @@
+---
+- name: PowerDNS (Recursors) - Create include-dir
+  file:
+    path: "{{ pdns_base_dir }}/recursor-{{ item.pool }}.d"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items: "{{ pdns_recursors }}"
+
+- name: PowerDNS (Recursors) - Create Config
+  template:
+    src: recursor.conf.j2
+    dest: "{{ pdns_base_dir }}/recursor-{{ item.pool }}.conf"
+  with_items: "{{ pdns_recursors }}"

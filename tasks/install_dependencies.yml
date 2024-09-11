@@ -1,10 +1,36 @@
 ---
-- name: PowerDNS - Install dependencies
+- name: PowerDNS - Install recursor
+  apt:
+    state: present
+    update_cache: yes
+    name: 
+      - pdns-recursor
+  when: pdns_install_recursor
+
+- name: PowerDNS - Install dnsdist
+  apt:
+    state: present
+    update_cache: yes
+    name: 
+      - dnsdist
+  when: pdns_install_dnsdist
+
+- name: PowerDNS - Install Server
   apt:
     state: present
     update_cache: yes
     name: 
       - pdns-server
-      - pdns-recursor
       - pdns-tools
+  when: pdns_install_auth
+
+- name: PowerDNS - Install MariaDB
+  apt:
+    state: present
+    update_cache: yes
+    name: 
+      - mariadb-server
+      - mariadb-client
+      - python3-mysqldb
       - pdns-backend-mysql
+  when: pdns_install_mysql
