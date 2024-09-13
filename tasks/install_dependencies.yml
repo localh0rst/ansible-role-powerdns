@@ -22,6 +22,8 @@
     name: 
       - pdns-server
       - pdns-tools
+      - pdns-backend-mysql
+      - mariadb-client
   when: pdns_install_auth
 
 - name: PowerDNS - Install MariaDB
@@ -30,7 +32,13 @@
     update_cache: yes
     name: 
       - mariadb-server
-      - mariadb-client
       - python3-mysqldb
       - pdns-backend-mysql
   when: pdns_install_mysql
+
+- name: PowerDNS - Install MariaDB Python Module
+  apt:
+    state: present
+    update_cache: yes
+    name: 
+      - python3-mysqldb
