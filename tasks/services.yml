@@ -1,0 +1,30 @@
+---
+- name: PowerDNS - Disable default Powerdns Recursor
+  ansible.builtin.systemd_service:
+    name: pdns-recursor.service
+    enabled: no
+    state: stopped
+  when: pdns_install_recursor
+
+- name: PowerDNS - Enable PowerDNS Recursor Custom Service
+  ansible.builtin.systemd_service:
+    name: pdns-recursor@{{ item.pool }}.service
+    enabled: yes
+    state: restarted
+  when: pdns_install_recursor
+  loop: "{{ pdns_recursors }}"
+
+- name: PowerDNS - Disable default Powerdns
+  ansible.builtin.systemd_service:
+    name: pdns.service
+    enabled: no
+    state: stopped
+  when: pdns_install_recursor
+
+- name: PowerDNS - Enable PowerDNS Custom Service
+  ansible.builtin.systemd_service:
+    name: pdns@{{ item.pool }}.service
+    enabled: yes
+    state: restarted
+  when: pdns_install_auth
+  loop: "{{ pdns_auths }}"
