@@ -15,6 +15,7 @@
     state: present
     priv: "{{ item.backend.database }}.*:ALL"
     host: "{{ item.backend.host }}"
+    host: "{{ item.backend.src_host }}"
   with_items: "{{ pdns_auths }}"
   when: item.backend.type == 'mysql'
   delegate_to: "{{ item.backend.host if item.backend.host != '127.0.0.1' else omit }}"
@@ -32,7 +33,7 @@
     - item.backend.type == 'mysql'
     - pdns_import_schema
     - pdns_auth_db.changed
-  delegate_to: "{{ item.backend.host if item.backend.host != '127.0.0.1' else omit }}"
+  #delegate_to: "{{ item.backend.host if item.backend.host != '127.0.0.1' else omit }}"
 
 - name: PowerDNS (Auth) - Create MySQL/MariaDB Config for PowerDNS
   template:
