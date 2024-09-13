@@ -3,6 +3,8 @@ setLocal('{{ pdns_dnsdist_listen_default }}')
 addLocal('{{ add }}')
 {% endfor %}
 
+setACL({ {{ pdns_dnsdist_acl | map("to_json") | join(", ") }}   })
+
 {% if pdns_dnsdist_create_pool_from_auths %}
 {% for p in pdns_auths %}
 newServer({address='{{ p.listen_ips[0] }}:{{ p.listen_port }}', pool='{{p.pool}}'})
@@ -26,6 +28,13 @@ newServer({address='{{ p.listen_ips[0] }}:{{ p.listen_port }}', pool='{{p.pool}}
 InternalDomains = newSuffixMatchNode()
 {% for int_dom in pdns_dnsdist_internal_domains %}
 InternalDomains:add(newDNSName('{{ int_dom }}'))
+{% endfor %}
+{% endif %}
+
+{% if pdns_dnsdist_external_domains | length > 0 %}
+ExternalDomains = newSuffixMatchNode()
+{% for ext_dom in pdns_dnsdist_external_domains %}
+ExternalDomains:add(newDNSName('{{ ext_dom }}'))
 {% endfor %}
 {% endif %}
 
