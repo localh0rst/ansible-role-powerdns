@@ -1,18 +1,24 @@
 ---
-#- include_tasks: install_dependencies.yml
-#- include_tasks: configure_recursors.yml
-#  when: 
-#    - pdns_install_recursor
-#    - pdns_recursors is defined
-#    - pdns_recursors | length > 0
-#- include_tasks: configure_auths.yml
-#  when: 
-#    - pdns_install_auth
-#    - pdns_auths is defined
-#    - pdns_auths | length > 0
-#- include_tasks: configure_mysql.yml
-#  when: 
-#    - pdns_install_mysql
+- include_tasks: install_dependencies.yml
+
+- include_tasks: configure_recursors.yml
+  when: 
+    - pdns_install_recursor
+    - pdns_recursors is defined
+    - pdns_recursors | length > 0
+
+- include_tasks: configure_auths.yml
+  when: 
+    - pdns_install_auth
+    - pdns_auths is defined
+    - pdns_auths | length > 0
+
+- include_tasks: configure_mysql.yml
+  when: 
+    - pdns_configure_mysql
+
 - include_tasks: configure_dnsdist.yml
   when: 
     - pdns_install_dnsdist
+
+- include_tasks: services.yml

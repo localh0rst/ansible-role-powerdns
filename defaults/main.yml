@@ -1,5 +1,6 @@
 ---
 pdns_install_mysql: true
+pdns_configure_mysql: true
 pdns_install_recursor: true
 pdns_install_auth: true
 pdns_install_dnsdist: true
@@ -12,11 +13,16 @@ pdns_import_schema: false
 
 pdns_dnsdist_listen_default: "127.0.0.1:53"
 pdns_dnsdist_listen_additional: []
+pdns_dnsdist_acl: [
+  "10.0.0.0/8", "100.64.0.0/10", "127.0.0.0/8", "169.254.0.0/16", 
+  "172.16.0.0/12", "192.168.0.0/16", "::1/128", "fc00::/7", "fe80::/10"
+]
 pdns_dnsdist_create_pool_from_auths: false
 pdns_dnsdist_create_pool_from_recursors: false
 pdns_dnsdist_net_netmasks: {}
 pdns_dnsdist_rules: []
 pdns_dnsdist_internal_domains: []
+pdns_dnsdist_external_domains: []
 pdns_skip_user_config:
     - config-dir
     - config-name
@@ -39,7 +45,8 @@ pdns_auths:
       username: powerdns_external
       password: mys3cr3tpdnsPw!
       database: powerdns_external
-      host: localhost
+      host: 127.0.0.1
+      src_host: 127.0.0.1
     config:
       #api: yes
       #api-key: mysecretapikey 
