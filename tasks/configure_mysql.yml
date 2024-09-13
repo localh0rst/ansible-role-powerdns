@@ -4,7 +4,9 @@
     name: "{{ item.backend.database }}"
     state: present
   with_items: "{{ pdns_auths }}"
+  register: pdns_auth_db
   when: item.backend.type == 'mysql'
+  delegate_to: "{{ item.backend.host if item.backend.host != '127.0.0.1' else omit }}"
 
 - name: PowerDNS (Auth) - Create MySQL/MariaDB Users
   community.mysql.mysql_user:
@@ -12,8 +14,10 @@
     password: "{{ item.backend.password }}"
     state: present
     priv: "{{ item.backend.database }}.*:ALL"
+    host: "{{ item.backend.host }}"
   with_items: "{{ pdns_auths }}"
   when: item.backend.type == 'mysql'
+  delegate_to: "{{ item.backend.host if item.backend.host != '127.0.0.1' else omit }}"
 
 - name: PowerDNS (Auth) - Import MySQL/MariaDB Schema
   community.mysql.mysql_db:
@@ -21,11 +25,14 @@
     login_user: "{{ item.backend.username }}"
     login_password: "{{ item.backend.password }}"
     state: import
+    login_host: "{{ item.backend.host }}"
     target: /usr/share/doc/pdns-backend-mysql/schema.mysql.sql
   with_items: "{{ pdns_auths }}"
   when: 
     - item.backend.type == 'mysql'
     - pdns_import_schema
+    - pdns_auth_db.changed
+  delegate_to: "{{ item.backend.host if item.backend.host != '127.0.0.1' else omit }}"
 
 - name: PowerDNS (Auth) - Create MySQL/MariaDB Config for PowerDNS
   template:
